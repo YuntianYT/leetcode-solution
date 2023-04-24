@@ -24,7 +24,7 @@ export default function Home() {
 
   return (
     <div className='flex h-screen flex-col justify-center px-6 py-12 lg:px-8'>
-      <div class='mx-auto w-full max-w-sm mb-10'>
+      <div className='mx-auto w-full max-w-sm mb-10'>
         <Image
           src='/../public/assets/LeetCode.png'
           width='640'
