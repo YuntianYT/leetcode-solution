@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import { useState } from 'react';
-
+import LeetCode from '../../public/assets/LeetCode.png';
 export default function Home() {
   const [number, setTitle] = useState('');
   const [language, setLanguage] = useState('javascript');
@@ -25,12 +25,7 @@ export default function Home() {
   return (
     <div className='flex h-screen flex-col justify-center px-6 py-12 lg:px-8'>
       <div className='mx-auto w-full max-w-sm mb-10'>
-        <Image
-          src='/../public/assets/LeetCode.png'
-          width='640'
-          height='64'
-          alt='/'
-        />
+        <Image src={LeetCode} width='640' height='64' alt='/' />
       </div>
       <div>
         <form onSubmit={handleSubmit}>
