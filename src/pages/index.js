@@ -9,6 +9,8 @@ export default function Home() {
   const [language, setLanguage] = useState('javascript');
   const [isVisible, setIsVisible] = useState(false);
   const [data, setData] = useState('');
+  const [isLoding, setIsLoding] = useState(false);
+
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
@@ -20,10 +22,12 @@ export default function Home() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsVisible(true);
+    setIsLoding(true);
     const response = await fetch(
       `/api/leetcode?number=${number}&language=${language}`
     );
     const data = await response.json();
+    setIsLoding(false);
     setData(data.solution);
     console.log(data);
   };
@@ -40,7 +44,7 @@ export default function Home() {
           <link rel='icon' href='/fav.webp' />
         </Head>
         <div className='mx-auto w-full max-w-sm mb-10'>
-          <Image src={LeetCode} width='640' height='64' alt='/' />
+          <Image src={LeetCode} width='640' height='64' alt='LeetCode logo' />
         </div>
         <div>
           <form onSubmit={handleSubmit}>
@@ -111,19 +115,27 @@ export default function Home() {
       >
         <div className='flex justify-center items-center w-full h-full'>
           <div className='w-3/5 h-4/5 bg-slate-100 rounded-xl shadow-lg'>
-            <div class='flex justify-end'>
+            <div className='flex justify-end'>
               <button
                 onClick={() => {
                   setIsVisible(false);
                 }}
-                class='rounded-full shadow-gray-400 bg-slate-100 w-8 h-8'
+                className='rounded-full shadow-gray-400 bg-slate-100 w-8 h-8'
               >
                 <AiOutlineClose />
               </button>
             </div>
             <div className='flex justify-center w-full h-full'>
-              <div className='p-3 mt-2 bg-slate-200 shadow-lg rounded-lg overflow-auto'>
-                <ReactMarkdown>{data}</ReactMarkdown>
+              <div className='p-3 mt-2 w-full h-full bg-slate-200 shadow-lg rounded-lg overflow-auto'>
+                {isLoding && (
+                  <div className='flex flex-col justify-center items-center w-full h-full'>
+                    <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-gray-600'></div>
+                    <div className='text-xs mt-4'>
+                      Generating solution from GPT-3.5 ...
+                    </div>
+                  </div>
+                )}
+                {!isLoding && <ReactMarkdown>{data}</ReactMarkdown>}
               </div>
             </div>
           </div>
