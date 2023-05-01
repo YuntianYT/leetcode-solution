@@ -6,11 +6,11 @@ import { AiOutlineClose } from 'react-icons/ai';
 import { ReactMarkdown } from 'react-markdown/lib/react-markdown';
 export default function Home() {
   const [number, setTitle] = useState('');
-  const [language, setLanguage] = useState('javascript');
+  const [language, setLanguage] = useState('JavaScript');
   const [isVisible, setIsVisible] = useState(false);
   const [data, setData] = useState('');
   const [isLoding, setIsLoding] = useState(false);
-
+  let displayText = '';
   const handleTitleChange = (e) => {
     setTitle(e.target.value);
   };
@@ -23,13 +23,47 @@ export default function Home() {
     e.preventDefault();
     setIsVisible(true);
     setIsLoding(true);
-    const response = await fetch(
-      `/api/leetcode?number=${number}&language=${language}`
-    );
-    const data = await response.json();
-    setIsLoding(false);
-    setData(data.solution);
-    console.log(data);
+    const dbResponse = await fetch(`/api/query`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ number, language }),
+    });
+    if (dbResponse.status === 200) {
+      const data = await dbResponse.json();
+      setIsLoding(false);
+      setData(data);
+    }
+    if (dbResponse.status === 404) {
+      const response = await fetch(`/api/openai`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ number, language }),
+      });
+      setIsLoding(false);
+      const resMessage = response.body;
+      const reader = resMessage.getReader();
+      const decoder = new TextDecoder();
+      let done = false;
+
+      while (!done) {
+        const { value, done: doneReading } = await reader.read();
+        done = doneReading;
+        const chunkValue = decoder.decode(value);
+        displayText += chunkValue;
+        setData(displayText);
+      }
+      await fetch(`/api/addDB`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ number, language, solution: displayText }),
+      });
+    }
   };
 
   return (

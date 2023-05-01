@@ -10,18 +10,18 @@ const configuration = new Configuration({
 const openai = new OpenAIApi(configuration);
 
 export default async function handler(req, res) {
-  const { number, language } = req.query;
+  const { number, language } = req.body;
 
   try {
     const client = new MongoClient(connectionString);
     const db = client.db('leetcode');
     const collection = db.collection('solutions');
     const data = await collection.findOne({
-      number: parseInt(number),
-      language: language,
+      number,
+      language,
     });
     if (data) {
-      res.status(200).json(data);
+      res.status(200).json(data.solution);
     } else {
       const response = await openai.createChatCompletion({
         model: 'gpt-3.5-turbo',
@@ -37,12 +37,12 @@ export default async function handler(req, res) {
         frequency_penalty: 0,
       });
       const newRecord = {
-        number: parseInt(number),
+        number: number,
         language,
         solution: response.data.choices[0].message.content,
       };
       await collection.insertOne(newRecord);
-      res.status(200).json(newRecord);
+      res.status(200).json(newRecord.solution);
     }
     await client.close();
   } catch (error) {
