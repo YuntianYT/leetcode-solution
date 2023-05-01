@@ -4,6 +4,20 @@ export const config = {
   runtime: 'edge',
 };
 
+export class OpenAIError extends Error {
+  type;
+  param;
+  code;
+
+  constructor(message, type, param, code) {
+    super(message);
+    this.name = 'OpenAIError';
+    this.type = type;
+    this.param = param;
+    this.code = code;
+  }
+}
+
 const OpenAIStream = async (number, language) => {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
@@ -11,7 +25,7 @@ const OpenAIStream = async (number, language) => {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      Authorization: `Bearer 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`,
     },
     method: 'POST',
     body: JSON.stringify({
@@ -24,14 +38,26 @@ const OpenAIStream = async (number, language) => {
       ],
       temperature: 0,
       max_tokens: 2048,
-      top_p: 1,
-      frequency_penalty: 0,
       stream: true,
     }),
   });
 
   if (res.status !== 200) {
-    throw new Error('OpenAI API returned an error');
+    const result = await res.json();
+    if (result.error) {
+      throw new OpenAIError(
+        result.error.message,
+        result.error.type,
+        result.error.param,
+        result.error.code
+      );
+    } else {
+      throw new Error(
+        `OpenAI API returned an error: ${
+          decoder.decode(result?.value) || result.statusText
+        }`
+      );
+    }
   }
 
   const stream = new ReadableStream({
@@ -73,7 +99,11 @@ export default async function handler(req) {
     const stream = await OpenAIStream(number, language);
     return new Response(stream);
   } catch (error) {
-    console.error(`Error with request: ${error.message}`);
-    return new Response('Error', { status: 500 });
+    console.error(error);
+    if (error instanceof OpenAIError) {
+      return new Response('Error', { status: 500, statusText: error.message });
+    } else {
+      return new Response('Error', { status: 500 });
+    }
   }
 }

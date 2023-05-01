@@ -56,13 +56,13 @@ export default function Home() {
         displayText += chunkValue;
         setData(displayText);
       }
-      // await fetch(`/api/addDB`, {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({ number, language, solution: displayText }),
-      // });
+      await fetch(`/api/addDB`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ number, language, solution: displayText }),
+      });
     }
   };
 
