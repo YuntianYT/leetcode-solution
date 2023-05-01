@@ -29,7 +29,21 @@ const OpenAIStream = async (number, language) => {
   });
 
   if (res.status !== 200) {
-    throw new Error('OpenAI API returned an error');
+    const result = await res.json();
+    if (result.error) {
+      throw new OpenAIError(
+        result.error.message,
+        result.error.type,
+        result.error.param,
+        result.error.code
+      );
+    } else {
+      throw new Error(
+        `OpenAI API returned an error: ${
+          decoder.decode(result?.value) || result.statusText
+        }`
+      );
+    }
   }
 
   const stream = new ReadableStream({
@@ -71,7 +85,11 @@ export default async function handler(req) {
     const stream = await OpenAIStream(number, language);
     return new Response(stream);
   } catch (error) {
-    console.error(`Error with request: ${error.message}`);
-    return new Response('test', { status: 500 });
+    console.error(error);
+    if (error instanceof OpenAIError) {
+      return new Response('Error', { status: 500, statusText: error.message });
+    } else {
+      return new Response('Error', { status: 500 });
+    }
   }
 }
