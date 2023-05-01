@@ -72,6 +72,6 @@ export default async function handler(req) {
     return new Response(stream);
   } catch (error) {
     console.error(`Error with request: ${error.message}`);
-    return new Response(error, { status: 500 });
+    return new Response('test', { status: 500 });
   }
 }
