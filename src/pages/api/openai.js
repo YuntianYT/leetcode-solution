@@ -24,8 +24,6 @@ const OpenAIStream = async (number, language) => {
       ],
       temperature: 0,
       max_tokens: 2048,
-      top_p: 1,
-      frequency_penalty: 0,
       stream: true,
     }),
   });
@@ -74,6 +72,6 @@ export default async function handler(req) {
     return new Response(stream);
   } catch (error) {
     console.error(`Error with request: ${error.message}`);
-    return new Response('Error', { status: 500 });
+    return new Response('Error', { status: 500, error: error });
   }
 }
