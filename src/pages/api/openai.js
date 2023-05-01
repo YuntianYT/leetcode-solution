@@ -4,6 +4,20 @@ export const config = {
   runtime: 'edge',
 };
 
+export class OpenAIError extends Error {
+  type;
+  param;
+  code;
+
+  constructor(message, type, param, code) {
+    super(message);
+    this.name = 'OpenAIError';
+    this.type = type;
+    this.param = param;
+    this.code = code;
+  }
+}
+
 const OpenAIStream = async (number, language) => {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
