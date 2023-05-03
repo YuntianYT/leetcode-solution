@@ -171,7 +171,11 @@ export default function Home() {
                     </div>
                   </div>
                 )}
-                {!isLoding && <ReactMarkdown>{data}</ReactMarkdown>}
+                {!isLoding && (
+                  <ReactMarkdown className='prose prose-xl min-w-full'>
+                    {data}
+                  </ReactMarkdown>
+                )}
               </div>
             </div>
           </div>
