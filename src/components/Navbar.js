@@ -67,7 +67,7 @@ const Navbar = () => {
         <div>
           <ul style={{ color: `${linkColor}` }} className='hidden md:flex'>
             <li className='ml-10 hover:border-b'>
-              <Link href='/#contact'>Contact</Link>
+              <Link href='https://www.terrys.app/#contact'>Contact</Link>
             </li>
           </ul>
           {/* Hamburger Icon */}
@@ -118,13 +118,6 @@ const Navbar = () => {
             </div>
           </div>
           <div className='py-4 flex flex-col'>
-            <ul>
-              <Link href='/#contact'>
-                <li onClick={() => setNav(false)} className='py-4 text-sm'>
-                  Contact
-                </li>
-              </Link>
-            </ul>
             <div className='pt-40'>
               <p className='uppercase tracking-widest text-[#5651e5]'>
                 Let&#39;s Connect
