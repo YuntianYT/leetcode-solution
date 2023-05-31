@@ -1,9 +1,6 @@
 import { Configuration, OpenAIApi } from 'openai';
 const { MongoClient } = require('mongodb');
 
-const connectionString =
-  'mongodb+srv://admin:H1iQFsiZdWNz095b@projects.xpyyyr0.mongodb.net/?retryWrites=true&w=majority';
-
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
 });
@@ -13,7 +10,7 @@ export default async function handler(req, res) {
   const { number, language } = req.body;
 
   try {
-    const client = new MongoClient(connectionString);
+    const client = new MongoClient(process.env.MONGODB_URI);
     const db = client.db('leetcode');
     const collection = db.collection('solutions');
     const data = await collection.findOne({
