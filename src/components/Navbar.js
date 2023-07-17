@@ -67,7 +67,7 @@ const Navbar = () => {
         <div>
           <ul style={{ color: `${linkColor}` }} className='hidden md:flex'>
             <li className='ml-10 hover:border-b'>
-              <Link href='https://www.terrys.app/#contact'>Contact</Link>
+              <Link href='https://www.terrys.app/contact'>Contact</Link>
             </li>
           </ul>
           {/* Hamburger Icon */}
